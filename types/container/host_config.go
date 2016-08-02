@@ -263,8 +263,8 @@ type Resources struct {
 	IOMaximumBandwidth uint64 // Maximum IO in bytes per second for the container system drive
 }
 
-// UpdateConfig holds the mutable attributes of a Container.
-// Those attributes can be updated at runtime.
+// UpdateConfig holds the attributes of a Container that can be updated at
+// runtime.
 type UpdateConfig struct {
 	// Contains container's resources (cgroups, ulimits)
 	Resources

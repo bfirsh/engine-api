@@ -71,3 +71,11 @@ type UpdateConfig struct {
 	Delay         time.Duration `json:",omitempty"`
 	FailureAction string        `json:",omitempty"`
 }
+
+// ServiceGetOptions are parameters for GET /services/{id}
+// swagger:parameters getService
+type ServiceGetOptions struct {
+	// The ID or name of the service
+	// in: query
+	ID string `json:"id"`
+}

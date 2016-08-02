@@ -89,6 +89,7 @@ type SearchResult struct {
 }
 
 // SearchResults lists a collection search results returned from a registry
+// swagger:model
 type SearchResults struct {
 	// Query contains the query string that generated the search results
 	Query string `json:"query"`

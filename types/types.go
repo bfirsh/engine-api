@@ -13,6 +13,7 @@ import (
 
 // ContainerCreateResponse contains the information returned to a client on the
 // creation of a new container.
+// swagger:model
 type ContainerCreateResponse struct {
 	// ID is the ID of the created container.
 	ID string `json:"Id"`
@@ -30,13 +31,15 @@ type ContainerExecCreateResponse struct {
 
 // ContainerUpdateResponse contains response of Remote API:
 // POST "/containers/{name:.*}/update"
+// swagger:model
 type ContainerUpdateResponse struct {
-	// Warnings are any warnings encountered during the updating of the container.
+	// Any warnings that were encountered when updating the container
 	Warnings []string `json:"Warnings"`
 }
 
 // AuthResponse contains response of Remote API:
 // POST "/auth"
+// swagger:model
 type AuthResponse struct {
 	// Status is the authentication status
 	Status string `json:"Status"`
@@ -48,6 +51,7 @@ type AuthResponse struct {
 
 // ContainerWaitResponse contains response of Remote API:
 // POST "/containers/"+containerID+"/wait"
+// swagger:model
 type ContainerWaitResponse struct {
 	// StatusCode is the status code of the wait job
 	StatusCode int `json:"StatusCode"`
@@ -55,19 +59,24 @@ type ContainerWaitResponse struct {
 
 // ContainerCommitResponse contains response of Remote API:
 // POST "/commit?container="+containerID
+// swagger:model
 type ContainerCommitResponse struct {
+	// The ID of the image created
 	ID string `json:"Id"`
 }
 
-// ContainerChange contains response of Remote API:
-// GET "/containers/{name:.*}/changes"
+// ContainerChange represents a single change in a container's filesystem
+// swagger:model
 type ContainerChange struct {
+	// The kind of change: 0 for modify, 1 for add, 2 for delete
 	Kind int
+	// The path on the filesystem where this change is
 	Path string
 }
 
 // ImageHistory contains response of Remote API:
 // GET "/images/{name:.*}/history"
+// swagger:model
 type ImageHistory struct {
 	ID        string `json:"Id"`
 	Created   int64
@@ -79,9 +88,10 @@ type ImageHistory struct {
 
 // ImageDelete contains response of Remote API:
 // DELETE "/images/{name:.*}"
+// swagger:model
 type ImageDelete struct {
-	Untagged string `json:",omitempty"`
-	Deleted  string `json:",omitempty"`
+	Untagged string `json:"Untagged,omitempty"`
+	Deleted  string `json:"Deleted,omitempty"`
 }
 
 // Image contains response of Remote API:
@@ -113,6 +123,7 @@ type RootFS struct {
 
 // ImageInspect contains response of Remote API:
 // GET "/images/{name:.*}/json"
+// swagger:model
 type ImageInspect struct {
 	ID              string `json:"Id"`
 	RepoTags        []string
@@ -133,32 +144,46 @@ type ImageInspect struct {
 	RootFS          RootFS
 }
 
-// Port stores open ports info of container
-// e.g. {"PrivatePort": 8080, "PublicPort": 80, "Type": "tcp"}
+// Port represents an exposed port on a container
 type Port struct {
-	IP          string `json:",omitempty"`
+	// The address that this port is binding to
+	IP string `json:"IP,omitempty"`
+	// The port inside the container
 	PrivatePort int
-	PublicPort  int `json:",omitempty"`
-	Type        string
+	// The port exposed on the host
+	PublicPort int `json:"PublicPort,omitempty"`
+	// tcp or udp
+	Type string
 }
 
-// Container contains response of Remote API:
-// GET "/containers/json"
+// Container is the representation of a container when listing them
 type Container struct {
-	ID         string `json:"Id"`
-	Names      []string
-	Image      string
-	ImageID    string
-	Command    string
-	Created    int64
-	Ports      []Port
-	SizeRw     int64 `json:",omitempty"`
-	SizeRootFs int64 `json:",omitempty"`
-	Labels     map[string]string
-	State      string
+	// The ID of this container
+	ID string `json:"Id"`
+	// The names that this container has been given
+	Names []string
+	// The name of the image used when creating this container
+	Image string
+	// The ID of the image that this container was created from
+	ImageID string
+	// Command to run when starting the container
+	Command string
+	// When the container was created
+	Created int64
+	// The ports exposed by this container
+	Ports []Port
+	// The size of files that have been created or changed by this container
+	SizeRw int64 `json:"SizeRw,omitempty"`
+	// The total size of all the files in this container
+	SizeRootFs int64 `json:"SizeRootFs,omitempty"`
+	// Labels that have been applied to this container
+	Labels map[string]string
+	// The state of this container (e.g. "Exited")
+	State string
+	// Additional human-readable status of this container (e.g. "Exit 0")
 	Status     string
 	HostConfig struct {
-		NetworkMode string `json:",omitempty"`
+		NetworkMode string `json:"NetworkMode,omitempty"`
 	}
 	NetworkSettings *SummaryNetworkSettings
 	Mounts          []MountPoint
@@ -188,8 +213,8 @@ type ContainerProcessList struct {
 	Titles    []string
 }
 
-// Version contains response of Remote API:
-// GET "/version"
+// Version is the API response for GET /version
+// swagger:model
 type Version struct {
 	Version       string
 	APIVersion    string `json:"ApiVersion"`
@@ -197,13 +222,13 @@ type Version struct {
 	GoVersion     string
 	Os            string
 	Arch          string
-	KernelVersion string `json:",omitempty"`
-	Experimental  bool   `json:",omitempty"`
-	BuildTime     string `json:",omitempty"`
+	KernelVersion string `json:"KernelVersion,omitempty"`
+	Experimental  bool   `json:"Experimental,omitempty"`
+	BuildTime     string `json:"BuildTime,omitempty"`
 }
 
-// Info contains response of Remote API:
-// GET "/info"
+// Info is the API response for GET /info
+// swagger:model
 type Info struct {
 	ID                 string
 	Containers         int
@@ -420,6 +445,7 @@ type MountPoint struct {
 }
 
 // Volume represents the configuration of a volume for the remote API
+// swagger:model
 type Volume struct {
 	Name       string                 // Name is the name of the volume
 	Driver     string                 // Driver is the Driver name used to create the volume
@@ -429,15 +455,25 @@ type Volume struct {
 	Scope      string                 // Scope describes the level at which the volume exists (e.g. `global` for cluster-wide or `local` for machine level)
 }
 
-// VolumesListResponse contains the response for the remote API:
-// GET "/volumes"
-type VolumesListResponse struct {
-	Volumes  []*Volume // Volumes is the list of volumes being returned
-	Warnings []string  // Warnings is a list of warnings that occurred when getting the list from the volume drivers
+// VolumeGetOptions containers the parameters for inspecting volumes
+// swagger:parameters getVolumeByName
+type VolumeGetOptions struct {
+	// The name of the volume
+	// in: path
+	Name string `json:"name"`
 }
 
-// VolumeCreateRequest contains the response for the remote API:
-// POST "/volumes/create"
+// VolumesListResponse contains the API response for listing volumes
+// swagger:model
+type VolumesListResponse struct {
+	// Volumes is the list of volumes being returned
+	Volumes []*Volume
+	// Warnings is a list of warnings that occurred when getting the list from the volume drivers
+	Warnings []string
+}
+
+// VolumeCreateRequest contains the request for creating volumes
+// swagger:model
 type VolumeCreateRequest struct {
 	Name       string            // Name is the requested name of the volume
 	Driver     string            // Driver is the name of the driver that should be used to create the volume
@@ -445,18 +481,44 @@ type VolumeCreateRequest struct {
 	Labels     map[string]string // Labels holds metadata specific to the volume being created.
 }
 
+// VolumeCreateOptions containers the parameters for creating volumes
+// swagger:parameters postVolumesCreate
+type VolumeCreateOptions struct {
+	// in: body
+	Body *VolumeCreateRequest
+}
+
+// VolumeDeleteOptions containers the parameters for inspecting volumes
+// swagger:parameters deleteVolumes
+type VolumeDeleteOptions struct {
+	// The name of the volume
+	// in: path
+	Name string `json:"name"`
+}
+
 // NetworkResource is the body of the "get network" http response message
+// swagger:model
 type NetworkResource struct {
-	Name       string                      // Name is the requested name of the network
-	ID         string                      `json:"Id"` // ID uniquely identifies a network on a single machine
-	Scope      string                      // Scope describes the level at which the network exists (e.g. `global` for cluster-wide or `local` for machine level)
-	Driver     string                      // Driver is the Driver name used to create the network (e.g. `bridge`, `overlay`)
-	EnableIPv6 bool                        // EnableIPv6 represents whether to enable IPv6
-	IPAM       network.IPAM                // IPAM is the network's IP Address Management
-	Internal   bool                        // Internal represents if the network is used internal only
-	Containers map[string]EndpointResource // Containers contains endpoints belonging to the network
-	Options    map[string]string           // Options holds the network specific options to use for when creating the network
-	Labels     map[string]string           // Labels holds metadata specific to the network being created
+	// Name is the requested name of the network
+	Name string
+	// ID uniquely identifies a network on a single machine
+	ID string `json:"Id"`
+	// Scope describes the level at which the network exists (e.g. `global` for cluster-wide or `local` for machine level)
+	Scope string
+	// Driver is the Driver name used to create the network (e.g. `bridge`, `overlay`)
+	Driver string
+	// EnableIPv6 represents whether to enable IPv6
+	EnableIPv6 bool
+	// IPAM is the network's IP Address Management
+	IPAM network.IPAM
+	// Internal represents if the network is used internal only
+	Internal bool
+	// Containers contains endpoints belonging to the network
+	Containers map[string]EndpointResource
+	// Options holds the network specific options to use for when creating the network
+	Options map[string]string
+	// Labels holds metadata specific to the network being created
+	Labels map[string]string
 }
 
 // EndpointResource contains network resources allocated and used for a container in a network
@@ -486,6 +548,7 @@ type NetworkCreateRequest struct {
 }
 
 // NetworkCreateResponse is the response message sent by the server for network create call
+// swagger:model
 type NetworkCreateResponse struct {
 	ID      string `json:"Id"`
 	Warning string
@@ -493,14 +556,17 @@ type NetworkCreateResponse struct {
 
 // NetworkConnect represents the data to be used to connect a container to the network
 type NetworkConnect struct {
+	// Container ID or name to be connected to the network
 	Container      string
 	EndpointConfig *network.EndpointSettings `json:",omitempty"`
 }
 
 // NetworkDisconnect represents the data to be used to disconnect a container from the network
 type NetworkDisconnect struct {
+	// Container ID or name to be disconnected from the network
 	Container string
-	Force     bool
+	// Force the container to disconnect from the network
+	Force bool
 }
 
 // Checkpoint represents the details of a checkpoint

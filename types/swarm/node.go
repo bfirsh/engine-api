@@ -1,6 +1,7 @@
 package swarm
 
 // Node represents a node.
+// swagger:model
 type Node struct {
 	ID string
 	Meta

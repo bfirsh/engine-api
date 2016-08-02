@@ -9,9 +9,13 @@ import (
 // frontend (such as an http server) and the backend (such as the
 // docker daemon).
 
-// ContainerCreateConfig is the parameter set to ContainerCreate()
+// ContainerCreateConfig holds parameters for creating containers
 type ContainerCreateConfig struct {
-	Name             string
+	// Assign the specified name to the container
+	//
+	// in: query
+	// pattern: /?[a-zA-Z0-9_-]+
+	Name             string `json:"name"`
 	Config           *container.Config
 	HostConfig       *container.HostConfig
 	NetworkingConfig *network.NetworkingConfig
@@ -19,10 +23,31 @@ type ContainerCreateConfig struct {
 }
 
 // ContainerRmConfig holds arguments for the container remove
+// swagger:parameters deleteContainers
 // operation. This struct is used to tell the backend what operations
 // to perform.
 type ContainerRmConfig struct {
-	ForceRemove, RemoveVolume, RemoveLink bool
+	// The container ID or name
+	//
+	// in: path
+	// required: true
+	ID string `json:"id"`
+
+	// Kill the container before removing it
+	//
+	// in: query
+	// default: false
+	ForceRemove bool `json:"force"`
+	// Remove volumes associated with this container
+	//
+	// in: query
+	// default: false
+	RemoveVolume bool `json:"v"`
+	// Remove links associated with this container
+	//
+	// in: query
+	// default: false
+	RemoveLink bool `json:"link"`
 }
 
 // ContainerCommitConfig contains build configs for commit operation,

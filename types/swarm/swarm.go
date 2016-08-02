@@ -11,6 +11,7 @@ type ClusterInfo struct {
 }
 
 // Swarm represents a swarm.
+// swagger:model
 type Swarm struct {
 	ClusterInfo
 	JoinTokens JoinTokens
@@ -135,7 +136,17 @@ type Peer struct {
 }
 
 // UpdateFlags contains flags for SwarmUpdate.
+// swagger:parameters updateCluster
 type UpdateFlags struct {
-	RotateWorkerToken  bool
-	RotateManagerToken bool
+	// The version number of the swarm object being updated. This is required to avoid conflicting writes.
+	// in: query
+	Version string `json:"version"`
+	// Set to true (or 1) to rotate the worker join token.
+	// in: query
+	RotateWorkerToken bool `json:"rotateWorkerToken"`
+	// Set to true (or 1) to rotate the manager join token.
+	// in: query
+	RotateManagerToken bool `json:"rotateManagerToken"`
+	// in: body
+	Body *Spec
 }
